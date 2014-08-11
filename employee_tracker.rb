@@ -1,7 +1,13 @@
 require 'active_record'
+require'pry'
+
 require './lib/employee'
 require './lib/project'
 require './lib/division'
+require './employee_menu'
+require './division_menu'
+require './project_menu'
+require './lib/assignment'
 
 database_configurations = YAML::load(File.open('./db/config.yml'))
 development_configuration = database_configurations['development']
@@ -14,48 +20,23 @@ end
 def main_menu
   header
   choice = nil
-  until choice == 'X'
-    puts "E > Employee Menu"
+    puts "E > Employee Menu" if (Division.all.length > 0)
     puts "D > Divisions Menu"
-    puts "P > Projects Menu"
+    puts "P > Projects Menu" if (Employee.all.length > 0)
     puts "X > Exit Program"
     choice = gets.chomp.upcase
     case choice
       when 'E' then employee_menu
-      when 'D' then divisions_menu
-      when 'P' then projects_menu
-      when 'X' then "Have a fantastic day!"
-      else "Invalid input. Try again."
+      when 'D' then division_menu
+      when 'P' then project_menu
+      when 'X'
+        puts "Have a fantastic day!"
+        exit
+      else
+        puts "Invalid input. Try again."
+        sleep 1
     end
-  end
+  main_menu
 end
 
-def employee_menu
-  choice = nil
-  until choice == 'X'
-    puts "A > Add Employee"
-    puts "L > List Employee"
-    puts "U > Update Employee"
-    puts "D > Delete Employee"
-    puts "X > Exit Program"
-    choice = gets.chomp.upcase
-    case choice
-      when 'A' then add_employee
-      when 'L' then
-        employees = Employee.all
-        employees.each { |employee| puts employee.name }
-      when 'U' then
-      when 'D' then
-      when 'X' then "Have a fantastic day!"
-      else "Invalid input. Try again."
-    end
-  end
-end
-
-def add_employee
-  puts "Please enter name of new employee!"
-  choice = gets.chomp
-  Employee.new(name: choice).save
-  puts "#{choice} has been added."
-end
 main_menu
